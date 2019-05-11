@@ -32,3 +32,8 @@ zip:
 
 test-correccio:
 	./corrector.py dictionary.txt noisy.txt corrected.txt editions.txt
+
+test-correccio-c: compilar-corrector
+
+compilar-corrector: corrector.c
+	gcc -o corrector corrector.c -ansi -pedantic -Wall

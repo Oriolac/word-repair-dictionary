@@ -47,8 +47,8 @@ def main():
 		if word not in diccionari:
 			corrected_word, num_differences = buscar_paraula_correcta(word, diccionari)
 			total_num_differences += num_differences
-			print(corrected_word)
-
+			print(corrected_word, file=file_corregit, end=' ')
+	print(total_num_differences, file=file_num_edicions)
 	file_diccionari.close()
 	file_amb_soroll.close()
 	file_corregit.close()
