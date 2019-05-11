@@ -4,11 +4,23 @@
 """ Corregeix el fitxer i retorna el text corregit i un altre text amb el nombre d'edicions """
 
 import sys
+import unittest
 
-def number_of_editions(wrong_word, corrected_word, index):
-    if len(wrong_word) == index:
-        return corrected_word
-    return 0
+
+
+
+def number_of_editions(wrong_word, corrected_word, visited=0):
+	if corrected_word is "" or wrong_word is "":
+		return max(len(corrected_word), len(wrong_word)) + visited
+	elif wrong_word[0].__eq__(corrected_word[0]):
+		return number_of_editions(wrong_word[1:], corrected_word[1:], visited)
+	else:
+		num1 = number_of_editions(wrong_word[1:], corrected_word, visited + 1)
+		num2 = number_of_editions(wrong_word, corrected_word[1:], visited + 1)
+		num3 = number_of_editions(wrong_word[1:], corrected_word[1:], visited + 1)
+	return min(num1,num2,num3)
+
+
 
 def buscar_paraula_correcta(wrong_word, diccionari):
     """ Busca la paraula mes aproximada a wrong_word i retorna aquesta i el nombre d'edicions que s'han hagut de fer """
