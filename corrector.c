@@ -14,6 +14,8 @@ void take_word_from_file(FILE *file, char word[WORD_MAX_LENGTH]);
 void print_if_debug(int debug, const char *fmt, ...);
 void print_string(const char *fmt, va_list args);
 int word_appears_in(char *word, char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH], int length_of_d);
+void find_correct_word(char word[WORD_MAX_LENGTH], char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH]);
+int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_LENGTH]);
 
 int debug_c;
 
@@ -118,6 +120,27 @@ int word_appears_in(char *word, char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_
     return 0;
 }
 
+int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_LENGTH])
+{
+    int visited = 0;
+}
+
+void find_correct_word(char word[WORD_MAX_LENGTH], char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH])
+{
+    int min_differences;
+    int num_differences;
+    int i;
+    min_differences = -1;
+    for(i = 0; i < DICTIONARY_MAX_LENGTH; i++)
+    {
+        num_differences = number_of_editions(word, dictionary[i]);
+        if(min_differences < num_differences)
+        {
+            min_differences = num_differences;
+        }
+    }
+}
+
 int main(int argc, char ** argv)
 {
     FILE *file_diccionari;
@@ -152,9 +175,9 @@ int main(int argc, char ** argv)
 
     for(i = 0; i < length_text; i++)
     {
-        if(word_appears_in(words_in_text[i], dictionary, DICTIONARY_MAX_LENGTH))
+        if(!word_appears_in(words_in_text[i], dictionary, DICTIONARY_MAX_LENGTH))
         {
-
+            find_correct_word(words_in_text[i], dictionary);
         }
     }
 
