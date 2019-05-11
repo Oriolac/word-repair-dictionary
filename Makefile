@@ -29,3 +29,6 @@ experiment:
 
 zip:
 	zip corrector.zip textgenerator.py noise.py checker.py mean.py dictionary.txt Makefile
+
+test-correccio:
+	./corrector.py dictionary.txt noisy.txt corrected.txt editions.txt
