@@ -33,7 +33,11 @@ zip:
 test-correccio:
 	./corrector.py dictionary.txt noisy.txt corrected.txt editions.txt
 
+debug-correccio-c: compilar-corrector
+	./corrector dictionary.txt noisy.txt corrected.txt editions.txt -d	
+
 test-correccio-c: compilar-corrector
+	./corrector dictionary.txt noisy.txt corrected.txt editions.txt
 
 compilar-corrector: corrector.c
 	gcc -o corrector corrector.c -ansi -pedantic -Wall
