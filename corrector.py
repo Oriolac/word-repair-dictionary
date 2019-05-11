@@ -15,19 +15,19 @@ def number_of_editions(wrong_word, corrected_word, visited=0):
 		num1 = number_of_editions(wrong_word[1:], corrected_word, visited + 1)
 		num2 = number_of_editions(wrong_word, corrected_word[1:], visited + 1)
 		num3 = number_of_editions(wrong_word[1:], corrected_word[1:], visited + 1)
-	return min(num1,num2,num3)
+	return min(num1, num2, num3)
 
 
 def buscar_paraula_correcta(wrong_word, diccionari):
 	""" Busca la paraula mes aproximada a wrong_word i retorna aquesta i el nombre d'edicions que s'han hagut de fer """
-	min = sys.maxsize
+	min_differences = sys.maxsize
 	word = ""
 	for corrected_word in diccionari:
 		num_differences = number_of_editions(wrong_word, corrected_word)
-		if num_differences < min:
-			min = num_differences
+		if num_differences < min_differences:
+			min_differences = num_differences
 			word = corrected_word
-	return word
+	return word, min_differences
 
 
 def main():
@@ -40,9 +40,14 @@ def main():
 	file_num_edicions = open(sys.argv[4], 'w')
 
 	line = file_amb_soroll.readline().split(' ')[:-1]
+
+	total_num_differences = 0
+
 	for word in line:
 		if word not in diccionari:
-			corrected_word = buscar_paraula_correcta(word, diccionari)
+			corrected_word, num_differences = buscar_paraula_correcta(word, diccionari)
+			total_num_differences += num_differences
+			print(corrected_word)
 
 	file_diccionari.close()
 	file_amb_soroll.close()
