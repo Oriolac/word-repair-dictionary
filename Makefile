@@ -40,4 +40,4 @@ test-correccio-c: compilar-corrector
 	./corrector dictionary.txt noisy.txt corrected.txt editions.txt
 
 compilar-corrector: corrector.c
-	gcc -o corrector corrector.c -ansi -pedantic -Wall
+	gcc -o corrector corrector.c stack.c -ansi -pedantic -Wall

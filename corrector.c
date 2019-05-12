@@ -2,20 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-
-#define NUM_PARAM 5
-#define DICTIONARY_MAX_LENGTH 140
-#define WORD_MAX_LENGTH 11
-#define MAX_WORDS 30
-
-int look_if_debug_mode(int argc, char ** argv);
-int take_words(FILE *file, char text[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH]);
-void take_word_from_file(FILE *file, char word[WORD_MAX_LENGTH]);
-void print_if_debug(int debug, const char *fmt, ...);
-void print_string(const char *fmt, va_list args);
-int word_appears_in(char *word, char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH], int length_of_d);
-void find_correct_word(char word[WORD_MAX_LENGTH], char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH]);
-int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_LENGTH]);
+#include "corrector.h"
 
 int debug_c;
 
@@ -123,22 +110,28 @@ int word_appears_in(char *word, char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_
 int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_LENGTH])
 {
     int visited = 0;
+
 }
 
-void find_correct_word(char word[WORD_MAX_LENGTH], char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH])
+struct correct_word find_correct_word(char word[WORD_MAX_LENGTH], char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH])
 {
-    int min_differences;
     int num_differences;
     int i;
-    min_differences = -1;
+    struct correct_word final_word;
+
+    final_word.min_differences = -1;
     for(i = 0; i < DICTIONARY_MAX_LENGTH; i++)
     {
         num_differences = number_of_editions(word, dictionary[i]);
-        if(min_differences < num_differences)
+        if(final_word.min_differences < num_differences)
         {
-            min_differences = num_differences;
+            final_word.min_differences = num_differences;
+            strcpy(final_word.corrected_word, dictionary[i]);
         }
     }
+
+    return final_word;
+
 }
 
 int main(int argc, char ** argv)
