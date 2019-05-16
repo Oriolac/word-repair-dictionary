@@ -1,8 +1,8 @@
 #include <stdarg.h>
 
 #define NUM_PARAM 5
-#define DICTIONARY_MAX_LENGTH 140
-#define WORD_MAX_LENGTH 11
+#define DICTIONARY_MAX_LENGTH 139
+#define WORD_MAX_LENGTH 20
 #define MAX_WORDS 30
 
 struct correct_word
@@ -30,6 +30,8 @@ void take_word_from_file(FILE *file, char word[WORD_MAX_LENGTH]);
 void print_if_debug(int debug, const char *fmt, ...);
 void print_string(const char *fmt, va_list args);
 int word_appears_in(char *word, char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH], int length_of_d);
+int length_of(char word[WORD_MAX_LENGTH]);
+void push_next_step(struct stack *s, struct element_of_stack elem);
 void push_the_differents_possibilities(struct stack *s, struct element_of_stack elem);
 struct correct_word find_correct_word(char word[WORD_MAX_LENGTH], char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH]);
 int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_LENGTH]);

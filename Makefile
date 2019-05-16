@@ -41,3 +41,9 @@ test-correccio-c: compilar-corrector
 
 compilar-corrector: corrector.c
 	gcc -o corrector corrector.c stack.c -pedantic -Wall
+
+test-one-c: compilar-corrector
+	python3 textgenerator.py dictionary.txt $(LENGTH) original.txt
+	python3 noise.py $(EDITIONS) original.txt noisy.txt actualeditions.txt
+	./corrector dictionary.txt noisy.txt corrected.txt editions.txt
+	cat editions.txt

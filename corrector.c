@@ -117,7 +117,10 @@ int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_
     struct stack s;
     struct element_of_stack elem;
 
+    char best_word[WORD_MAX_LENGTH];
+
     int min_differences;
+    min_differences = 1000;
     s = create_a_stack();
 
     print_if_debug(debug_c, "Es busca la paraula amb %s!", corrected_word);
@@ -129,14 +132,18 @@ int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_
     while(!is_empty(s))
     {
         elem = pop(&s);
-        print_if_debug(debug_c, "%s, %s, %i", elem.word, elem.corrected_word, elem.editions);
-        sleep(1);
+        //print_if_debug(debug_c, "%s, %s, %i", elem.word, elem.corrected_word, elem.editions);
+        //sleep(1);
         if(strcmp(elem.corrected_word, "") == 0 || strcmp(elem.word, "") == 0)
         {
-            print_if_debug(debug_c, "EOO");
-        } else if(corrected_word[0] == word[0]) 
+            elem.editions += length_of(elem.corrected_word) + length_of(elem.word);
+            if(min_differences > elem.editions)
+            {
+                min_differences = elem.editions;
+            }
+        } else if(elem.corrected_word[0] == elem.word[0]) 
         {
-            
+            push_next_step(&s, elem);
         } else
         {
             push_the_differents_possibilities(&s, elem);
@@ -144,7 +151,31 @@ int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_
         
         
     }
-    return 0;
+    print_if_debug(debug_c, "Les diferències amb %s és %i", corrected_word, min_differences);
+    return min_differences;
+}
+
+int length_of(char word[WORD_MAX_LENGTH])
+{
+    int i;
+    i = 0;
+    while(strcmp(word, "") != 0)
+    {
+        strcpy(word, &word[1]);
+        i++;
+    }
+    return i;
+}
+
+void push_next_step(struct stack *s, struct element_of_stack elem)
+{
+    struct element_of_stack elem2;
+
+    elem2.editions = elem.editions;
+
+    strcpy(elem2.word, &elem.word[1]);
+    strcpy(elem2.corrected_word, &elem.corrected_word[1]);
+    push(s, elem2);
 }
 
 void push_the_differents_possibilities(struct stack *s, struct element_of_stack elem)
@@ -154,17 +185,16 @@ void push_the_differents_possibilities(struct stack *s, struct element_of_stack 
     elem2.editions = elem.editions +1;
 
     strcpy(elem2.word, &elem.word[1]);
-    printf("%c\n%c\n", elem.word[0], elem2.word[0]);
     strcpy(elem2.corrected_word, elem.corrected_word);
-    print_if_debug(debug_c, "S'afegeix (%s, %s, %i) per addició de lletra", elem2.word, elem2.corrected_word, elem2.editions);
+    //print_if_debug(debug_c, "S'afegeix (%s, %s, %i) per addició de lletra", elem2.word, elem2.corrected_word, elem2.editions);
     push(s,elem2);
 
     strcpy(elem2.corrected_word, &elem.corrected_word[1]);
-    print_if_debug(debug_c, "S'afegeix (%s, %s, %i) per canvi de lletra", elem2.word, elem2.corrected_word, elem2.editions);
+    //print_if_debug(debug_c, "S'afegeix (%s, %s, %i) per canvi de lletra", elem2.word, elem2.corrected_word, elem2.editions);
     push(s, elem2);
 
     strcpy(elem2.word, elem.word);
-    print_if_debug(debug_c, "S'afegeix (%s, %s, %i) per supressió de lletra", elem2.word, elem2.corrected_word, elem2.editions);
+    //print_if_debug(debug_c, "S'afegeix (%s, %s, %i) per supressió de lletra", elem2.word, elem2.corrected_word, elem2.editions);
     push(s, elem2);
 }
 
@@ -174,16 +204,18 @@ struct correct_word find_correct_word(char word[WORD_MAX_LENGTH], char dictionar
     int i;
     struct correct_word final_word;
 
-    final_word.min_differences = -1;
+    final_word.min_differences = 10000;
     for(i = 0; i < DICTIONARY_MAX_LENGTH; i++)
     {
         num_differences = number_of_editions(word, dictionary[i]);
-        if(final_word.min_differences < num_differences)
+        if(final_word.min_differences > num_differences)
         {
+            printf("%s\n", dictionary[i]);
             final_word.min_differences = num_differences;
             strcpy(final_word.corrected_word, dictionary[i]);
         }
     }
+    printf("%s amb %i diffs\n", final_word.corrected_word, final_word.min_differences);
 
     return final_word;
 
