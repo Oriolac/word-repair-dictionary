@@ -10,6 +10,8 @@ struct stack create_a_stack()
     return s;
 }
 
+
+
 int is_empty(struct stack s)
 {
     if(s.top == -1)
@@ -28,34 +30,37 @@ int is_full(struct stack s)
     return 0;
 }
 
-char* top(struct stack s)
+struct element_of_stack top(struct stack s)
 {
-    char *str;
-    str = (char *) malloc(WORD_MAX_LENGTH);
-    strcpy(str, s.stack[s.top]);
-    return str;
+    struct element_of_stack elem;
+    if(!is_empty(s))
+    {
+        return s.elem[s.top];
+    }
+    memset(&elem, 0, sizeof(elem));
+    return elem;
 }
 
-char* pop(struct stack *s)
+struct element_of_stack pop(struct stack *s)
 {
-    char *str;
+    struct element_of_stack elem;
     if(!is_empty(*s))
     {
-        str = (char *) malloc(WORD_MAX_LENGTH);
-        strcpy(str,s->stack[s->top]);
+        elem = s->elem[s->top];
         s->top = s->top - 1;
-        return str;
+        return elem;
     } else {
-        return "";
+        memset(&elem, 0, sizeof(elem));
+        return elem;
     }
 }
 
-int push(struct stack *s, char word[WORD_MAX_LENGTH])
+int push(struct stack *s, struct element_of_stack elem)
 {
     if(!is_full(*s))
     {
         s->top++;
-        strcpy(s->stack[s->top], word);
+        s->elem[s->top] = elem;
         return 1;
     } else {
         return 0;

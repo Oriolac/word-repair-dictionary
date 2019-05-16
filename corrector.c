@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <unistd.h>
 #include "corrector.h"
 
 int debug_c;
@@ -23,6 +24,7 @@ void print_string(const char *fmt, va_list args)
 {
 	char *string;
 	int i;
+    char c;
 	while( *fmt != '\0')
 	{
 		if(*fmt == '%' && *(fmt+1) == 's')
@@ -35,7 +37,12 @@ void print_string(const char *fmt, va_list args)
 			++fmt;
 			i = va_arg(args,int);
 			printf("%i", i);
-		} else {
+		} else if(*fmt == '%' && *(fmt+1) == 'c')
+        {
+            ++fmt;
+            c = (char) va_arg(args, int);
+            printf("%c", c);
+        } else {
 			printf("%c", *fmt);
 		}
 		++fmt;
@@ -67,10 +74,8 @@ int take_words(FILE *file, char text[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH])
     for(i=0; i < DICTIONARY_MAX_LENGTH; i++)
     {
         take_word_from_file(file, word);
-        if(word[0] != '\0')
+        if(word[0] == '\0')
         {
-            print_if_debug(debug_c, "S'agafa la paraula num. %i => %s", i +1, word);
-        } else {
             return i;
         }
         strcpy(text[i], word);
@@ -109,8 +114,58 @@ int word_appears_in(char *word, char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_
 
 int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_LENGTH])
 {
-    int visited = 0;
+    struct stack s;
+    struct element_of_stack elem;
 
+    int min_differences;
+    s = create_a_stack();
+
+    print_if_debug(debug_c, "Es busca la paraula amb %s!", corrected_word);
+
+    strcpy(elem.corrected_word, corrected_word);
+    elem.editions = 0;
+    strcpy(elem.word, word);
+    push(&s, elem);
+    while(!is_empty(s))
+    {
+        elem = pop(&s);
+        print_if_debug(debug_c, "%s, %s, %i", elem.word, elem.corrected_word, elem.editions);
+        sleep(1);
+        if(strcmp(elem.corrected_word, "") == 0 || strcmp(elem.word, "") == 0)
+        {
+            print_if_debug(debug_c, "EOO");
+        } else if(corrected_word[0] == word[0]) 
+        {
+            
+        } else
+        {
+            push_the_differents_possibilities(&s, elem);
+        }
+        
+        
+    }
+    return 0;
+}
+
+void push_the_differents_possibilities(struct stack *s, struct element_of_stack elem)
+{
+    struct element_of_stack elem2;
+
+    elem2.editions = elem.editions +1;
+
+    strcpy(elem2.word, &elem.word[1]);
+    printf("%c\n%c\n", elem.word[0], elem2.word[0]);
+    strcpy(elem2.corrected_word, elem.corrected_word);
+    print_if_debug(debug_c, "S'afegeix (%s, %s, %i) per addició de lletra", elem2.word, elem2.corrected_word, elem2.editions);
+    push(s,elem2);
+
+    strcpy(elem2.corrected_word, &elem.corrected_word[1]);
+    print_if_debug(debug_c, "S'afegeix (%s, %s, %i) per canvi de lletra", elem2.word, elem2.corrected_word, elem2.editions);
+    push(s, elem2);
+
+    strcpy(elem2.word, elem.word);
+    print_if_debug(debug_c, "S'afegeix (%s, %s, %i) per supressió de lletra", elem2.word, elem2.corrected_word, elem2.editions);
+    push(s, elem2);
 }
 
 struct correct_word find_correct_word(char word[WORD_MAX_LENGTH], char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH])
@@ -170,6 +225,7 @@ int main(int argc, char ** argv)
     {
         if(!word_appears_in(words_in_text[i], dictionary, DICTIONARY_MAX_LENGTH))
         {
+            print_if_debug(debug_c, "Paraula incorrecta: %s", words_in_text[i]);
             find_correct_word(words_in_text[i], dictionary);
         }
     }
