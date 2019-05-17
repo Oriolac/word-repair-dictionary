@@ -6,15 +6,15 @@
 import sys
 
 
-def number_of_editions(wrong_word, corrected_word, visited=0):
+def number_of_editions(wrong_word, corrected_word, num_editions=0):
 	if corrected_word is "" or wrong_word is "":
-		return max(len(corrected_word), len(wrong_word)) + visited
+		return max(len(corrected_word), len(wrong_word)) + num_editions
 	elif wrong_word[0].__eq__(corrected_word[0]):
-		return number_of_editions(wrong_word[1:], corrected_word[1:], visited)
+		return number_of_editions(wrong_word[1:], corrected_word[1:], num_editions)
 	else:
-		num1 = number_of_editions(wrong_word[1:], corrected_word, visited + 1)
-		num2 = number_of_editions(wrong_word, corrected_word[1:], visited + 1)
-		num3 = number_of_editions(wrong_word[1:], corrected_word[1:], visited + 1)
+		num1 = number_of_editions(wrong_word[1:], corrected_word, num_editions + 1)
+		num2 = number_of_editions(wrong_word, corrected_word[1:], num_editions + 1)
+		num3 = number_of_editions(wrong_word[1:], corrected_word[1:], num_editions + 1)
 	return min(num1, num2, num3)
 
 
@@ -42,13 +42,23 @@ def main():
 	line = file_amb_soroll.readline().split(' ')[:-1]
 
 	total_num_differences = 0
+	text = []
 
 	for word in line:
 		if word not in diccionari:
 			corrected_word, num_differences = buscar_paraula_correcta(word, diccionari)
 			total_num_differences += num_differences
-			print(corrected_word, file=file_corregit, end=' ')
-	
+			text.append(corrected_word)
+		else:
+			text.append(word)
+
+	for index in list(range(len(text))):
+		if index == len(text)-1:
+			print(text[index], end='', file=file_corregit)
+		else:
+			print(text[index], end=' ', file=file_corregit)
+	print('\n', end='', file=file_corregit)
+
 	print(total_num_differences, file=file_num_edicions)
 	file_diccionari.close()
 	file_amb_soroll.close()
