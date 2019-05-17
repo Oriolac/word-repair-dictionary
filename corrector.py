@@ -6,16 +6,18 @@
 import sys
 
 
-def number_of_editions(wrong_word, corrected_word, num_editions=0):
+def number_of_editions(wrong_word, corrected_word, num_editions=0, min_editions=sys.maxsize):
 	if corrected_word is "" or wrong_word is "":
 		return max(len(corrected_word), len(wrong_word)) + num_editions
 	elif wrong_word[0].__eq__(corrected_word[0]):
-		return number_of_editions(wrong_word[1:], corrected_word[1:], num_editions)
+		return number_of_editions(wrong_word[1:], corrected_word[1:], num_editions, min_editions)
+	elif num_editions < min_editions:
+		num1 = number_of_editions(wrong_word[1:], corrected_word, num_editions + 1, min_editions)
+		num2 = number_of_editions(wrong_word, corrected_word[1:], num_editions + 1, min_editions)
+		num3 = number_of_editions(wrong_word[1:], corrected_word[1:], num_editions + 1, min_editions)
+		return min(num1, num2, num3)
 	else:
-		num1 = number_of_editions(wrong_word[1:], corrected_word, num_editions + 1)
-		num2 = number_of_editions(wrong_word, corrected_word[1:], num_editions + 1)
-		num3 = number_of_editions(wrong_word[1:], corrected_word[1:], num_editions + 1)
-	return min(num1, num2, num3)
+		return min_editions
 
 
 def buscar_paraula_correcta(wrong_word, diccionari):
@@ -23,7 +25,7 @@ def buscar_paraula_correcta(wrong_word, diccionari):
 	min_differences = sys.maxsize
 	word = ""
 	for corrected_word in diccionari:
-		num_differences = number_of_editions(wrong_word, corrected_word)
+		num_differences = number_of_editions(wrong_word, corrected_word, min_editions=min_differences)
 		if num_differences < min_differences:
 			min_differences = num_differences
 			word = corrected_word

@@ -148,8 +148,6 @@ int number_of_editions(char word[WORD_MAX_LENGTH], char corrected_word[WORD_MAX_
         {
             push_the_differents_possibilities(&s, elem);
         }
-        
-        
     }
     print_if_debug(debug_c, "Les diferències amb %s és %i", corrected_word, min_differences);
     return min_differences;
@@ -227,12 +225,14 @@ int main(int argc, char ** argv)
     FILE *file_amb_soroll;
     FILE *file_corregit;
     FILE *file_num_edicions;
-
     int i;
     int length_text;
-
     char dictionary[DICTIONARY_MAX_LENGTH][WORD_MAX_LENGTH];
     char words_in_text[MAX_WORDS][WORD_MAX_LENGTH];
+    struct correct_word c_word;
+    int sum_editions;
+
+    sum_editions = 0;
 
     if(argc < NUM_PARAM)
     {
@@ -258,10 +258,17 @@ int main(int argc, char ** argv)
         if(!word_appears_in(words_in_text[i], dictionary, DICTIONARY_MAX_LENGTH))
         {
             print_if_debug(debug_c, "Paraula incorrecta: %s", words_in_text[i]);
-            find_correct_word(words_in_text[i], dictionary);
+            c_word = find_correct_word(words_in_text[i], dictionary);
+            fprintf(file_corregit, "%s ", c_word.corrected_word);
+            sum_editions += c_word.min_differences;
+        }
+        else
+        {
+            fprintf(file_corregit, "%s ", words_in_text[i]);
         }
     }
 
+    fprintf(file_num_edicions, "%i", sum_editions);
     fclose(file_diccionari);
     fclose(file_amb_soroll);
     fclose(file_corregit);

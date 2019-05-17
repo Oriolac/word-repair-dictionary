@@ -18,8 +18,8 @@ test-average:
 	@echo -n $(LENGTH) $(EDITIONS)" "; cat mean.txt
 
 test-one:
-	#python3 textgenerator.py dictionary.txt $(LENGTH) original.txt
-	#python3 noise.py $(EDITIONS) original.txt noisy.txt actualeditions.txt
+	python3 textgenerator.py dictionary.txt $(LENGTH) original.txt
+	python3 noise.py $(EDITIONS) original.txt noisy.txt actualeditions.txt
 	python3 corrector.py dictionary.txt noisy.txt corrected.txt editions.txt
 	python3 checker.py original.txt corrected.txt actualeditions.txt editions.txt
 	cat editions.txt
